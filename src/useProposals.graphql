@@ -1,0 +1,16 @@
+query Proposals($chainId: ChainID!, $pagination: Pagination, $sort: ProposalSort ) {
+  proposals(chainId: $chainId, pagination: $pagination, sort: $sort) {
+    id
+    title
+    eta
+    governor {
+        name
+    }
+    voteStats {
+        support
+        weight
+        votes
+        percent
+    }
+  }
+}

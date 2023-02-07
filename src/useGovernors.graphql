@@ -1,0 +1,15 @@
+query Governors($chainIds: [ChainID!], $pagination: Pagination, $sort: GovernorSort ) {
+  governors(chainIds: $chainIds, pagination: $pagination, sort: $sort) {
+    id
+    name
+    delegates {
+      account {
+        id
+      }
+    }
+    proposalStats {
+      total
+      active
+    }
+  }
+}
