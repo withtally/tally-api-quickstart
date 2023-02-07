@@ -124,7 +124,6 @@ const ProposalTable = ({ proposals }) => {
       <tbody>
         {proposals.map((proposal, index) => {
           const forPercent = proposal.voteStats[0].percent.toFixed();
-          const againstPercent = proposal.voteStats[1].percent.toFixed();
 
           return (
             <tr key={`proposal-row-${index}`}>
