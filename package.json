@@ -6,9 +6,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "generate": "npx graphql-codegen --config codegen.js && esbuild autogen/schema.ts --format=esm --outfile=src/hooks.js",
-    "watch": "npm run config --watch",
-    "esbuild": "esbuild autogen/schema.ts --format=esm --outfile=src/hooks.js"
+    "gen:types": "npx graphql-codegen --config codegen.js && esbuild autogen/schema.ts --format=esm --outfile=src/hooks.js",
+    "watch": "npm run config --watch"
   },
   "dependencies": {
     "@tanstack/react-query": "^4.24.4", 
