@@ -13,3 +13,5 @@ query Governors($chainIds: [ChainID!], $pagination: Pagination, $sort: GovernorS
     }
   }
 }
+
+# check out https://apidocs.tally.xyz/ to get a reference for all our queries, sub-queries and selectors

@@ -28,10 +28,14 @@ const Header = () => {
 const Governors = () => {
   const chainIds = ["eip155:1"];
 
+  // The generated hook below encapsulates react-query to return the query response data, 
+  // along with errors and important states like isLoading and isSuccess.
+  // You can learn more about this here: https://react-query-v3.tanstack.com/guides/queries
+
   const { data, isLoading } = useGovernorsQuery({
     chainIds,
     pagination: { limit: 12, offset: 0 },
-    sort: { field: "TOTAL_PROPOSALS", order: "DESC" },
+    sort: { field: "TOTAL_PROPOSALS", order: "ASC" },
   });
 
   const { governors } = data ?? [];
