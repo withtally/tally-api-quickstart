@@ -1,7 +1,8 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import "./App.css";
-import { useGovernorsQuery, useProposalsQuery } from "./hooks";
+import { useGovernorsQuery } from "./hooks";
+import {useGraphQL} from "./useGraphQL"
 
 function App() {
   const queryClient = new QueryClient();
@@ -28,7 +29,7 @@ const Header = () => {
 const Governors = () => {
   const chainIds = ["eip155:1"];
 
-  // The generated hook below encapsulates react-query to return the query response data, 
+  // The generated hook below encapsulates react-query to return the query response data,
   // along with errors and important states like isLoading and isSuccess.
   // You can learn more about this here: https://react-query-v3.tanstack.com/guides/queries
 
@@ -87,18 +88,39 @@ const GovernorsTable = ({ governors }) => {
 };
 
 const Proposals = () => {
+  const ProposalsDocument = `
+    query Proposals($chainId: ChainID!, $pagination: Pagination, $sort: ProposalSort) {
+  proposals(chainId: $chainId, pagination: $pagination, sort: $sort) {
+    id
+    title
+    eta
+    governor {
+      name
+    }
+    voteStats {
+      support
+      weight
+      votes
+      percent
+    }
+  }
+}
+    `;
+
   const chainId = "eip155:1";
 
-  const { data, isLoading } = useProposalsQuery({
-    chainId,
-    pagination: { limit: 12, offset: 0 },
-    sort: {field: "START_BLOCK", order: "DESC" }
+  const data = useGraphQL({
+    query: ProposalsDocument,
+    variables: {
+      chainId,
+      pagination: { limit: 8, offset: 0 },
+      sort: { field: "START_BLOCK", order: "DESC" },
+    },
   });
 
   const { proposals } = data ?? [];
 
-
-  if (isLoading)
+  if (!data)
     return (
       <div className="tableLoading">
         <b>loading...</b>

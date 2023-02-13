@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useGraphQL } from "../autogen/useGraphQL";
+import { useGraphQLCodegen } from "../autogen/useGraphQLCodegen";
 var AccountActivitySortField = /* @__PURE__ */ ((AccountActivitySortField2) => {
   AccountActivitySortField2["BlockTimestamp"] = "BLOCK_TIMESTAMP";
   return AccountActivitySortField2;
@@ -209,30 +209,7 @@ const GovernorsDocument = `
     `;
 const useGovernorsQuery = (variables, options) => useQuery(
   variables === void 0 ? ["Governors"] : ["Governors", variables],
-  useGraphQL(GovernorsDocument).bind(null, variables),
-  options
-);
-const ProposalsDocument = `
-    query Proposals($chainId: ChainID!, $pagination: Pagination, $sort: ProposalSort) {
-  proposals(chainId: $chainId, pagination: $pagination, sort: $sort) {
-    id
-    title
-    eta
-    governor {
-      name
-    }
-    voteStats {
-      support
-      weight
-      votes
-      percent
-    }
-  }
-}
-    `;
-const useProposalsQuery = (variables, options) => useQuery(
-  ["Proposals", variables],
-  useGraphQL(ProposalsDocument).bind(null, variables),
+  useGraphQLCodegen(GovernorsDocument).bind(null, variables),
   options
 );
 export {
@@ -257,7 +234,6 @@ export {
   ProposalActionType,
   ProposalSortField,
   ProposalStatusType,
-  ProposalsDocument,
   Recipe,
   Role,
   SimulationStatus,
@@ -269,6 +245,5 @@ export {
   TokenType,
   VoteSortField,
   VotingPowerChangeSortField,
-  useGovernorsQuery,
-  useProposalsQuery
+  useGovernorsQuery
 };

@@ -1,5 +1,5 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
-import { useGraphQL } from '../autogen/useGraphQL';
+import { useGraphQLCodegen } from '../autogen/useGraphQLCodegen';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -16,6 +16,7 @@ export type Scalars = {
   Address: string;
   AssetID: string;
   BigInt: string;
+  BlockID: any;
   Bytes: string;
   Bytes32: string;
   ChainID: string;
@@ -26,14 +27,26 @@ export type Scalars = {
   Upload: any;
 };
 
+/** Key for use with this API.  See https://docs.tally.xyz/tally-api/welcome#request-an-api-key for how to request & use! */
+export type ApiKey = {
+  /** Last four characters of original generated key */
+  lastFour: Scalars['String'];
+  /** User generated name to differentiate keys */
+  name: Scalars['String'];
+};
+
 /** A Blockchain `Account` with its associated metadata, participations and activity. */
 export type Account = {
   /** AccountActivity (votes, proposals created, etc).  Currently only supports on chain governance. */
   activity?: Maybe<Array<ActivityItem>>;
   /** EVM Address for this `Account` */
   address: Scalars['Address'];
+  /** List of APIKeys generated for this account.  See https://docs.tally.xyz/tally-api/welcome#request-an-api-key for how to request & use! */
+  apiKeys?: Maybe<Array<ApiKey>>;
   /** `Account` bio set on Tally */
   bio: Scalars['String'];
+  /** `Account` email set on Tally */
+  email: Scalars['String'];
   /** Ethereum Name Service Name */
   ens?: Maybe<Scalars['String']>;
   /** Feature flags */
@@ -121,12 +134,12 @@ export type AddressInfoParticipationsArgs = {
 };
 
 export type Block = {
-  id: Scalars['ID'];
+  id: Scalars['BlockID'];
   number: Scalars['Long'];
   timestamp: Scalars['Timestamp'];
 };
 
-export type BlockId = {
+export type BlockIdInput = {
   blockNumber: Scalars['Long'];
   chain: Scalars['ChainID'];
 };
@@ -143,6 +156,8 @@ export type Chain = {
   id: Scalars['ChainID'];
   /**  Boolean true if it is a testnet, false if it's not. */
   isTestnet: Scalars['Boolean'];
+  /**  If chain is an L2, the L1 id in format eip155:chain_id  */
+  layer1Id?: Maybe<Scalars['ChainID']>;
   /** Chain name with removed redundancy and unnecessary words. e.g.: Ethereum Rinkeby */
   mediumName: Scalars['String'];
   /** Chain name as found in eip lists. e.g.: Ethereum Testnet Rinkeby */
@@ -155,6 +170,8 @@ export type Chain = {
   svg?: Maybe<Scalars['String']>;
   /**  Boolean true if Tenderly supports simulations. */
   tenderlySupport: Scalars['Boolean'];
+  /**  Boolean true if L2 depends on L1 for voting period, false if it doesn't. */
+  useLayer1VotingPeriod: Scalars['Boolean'];
 };
 
 export type Collectible = {
@@ -761,7 +778,7 @@ export type Mutation = {
   unlinkGnosisSafe: Scalars['Boolean'];
   /** Unlinks a Governance from it's Organization for linking to other Organizations */
   unlinkGovernance: Governance;
-  /** Updates tally stored `Account` metadata (name, bio, picture, identity providers, etc) */
+  /** Updates tally stored `Account` metadata (name, bio, picture, email, identity providers, etc) */
   updateAccount: Scalars['Boolean'];
   /** Updates an Account for a user via their account id */
   updateAccountByID: Scalars['Boolean'];
@@ -949,6 +966,7 @@ export type MutationUnlinkGovernanceArgs = {
 
 export type MutationUpdateAccountArgs = {
   bio?: InputMaybe<Scalars['String']>;
+  email?: InputMaybe<Scalars['String']>;
   identities?: InputMaybe<IdentitiesInput>;
   name?: InputMaybe<Scalars['String']>;
   otherLinks?: InputMaybe<Array<InputMaybe<OtherLinkInput>>>;
@@ -958,6 +976,7 @@ export type MutationUpdateAccountArgs = {
 
 export type MutationUpdateAccountByIdArgs = {
   bio?: InputMaybe<Scalars['String']>;
+  email?: InputMaybe<Scalars['String']>;
   id: Scalars['AccountID'];
   identities?: InputMaybe<IdentitiesInput>;
   name?: InputMaybe<Scalars['String']>;
@@ -1501,7 +1520,7 @@ export type Query = {
   accountDelegationsIn?: Maybe<Array<Delegation>>;
   accounts: Array<Account>;
   address: AddressInfo;
-  /** Returns the `Block` including an actual or estimated timestamp given a `BlockID`. */
+  /** Returns the `Block` including an actual or estimated timestamp given a `BlockIDInput`. */
   block: Block;
   chains: Array<Maybe<Chain>>;
   createProposalSimulation: Array<Simulation>;
@@ -1576,7 +1595,7 @@ export type QueryAddressArgs = {
 
 
 export type QueryBlockArgs = {
-  id: BlockId;
+  id: BlockIdInput;
 };
 
 
@@ -2094,15 +2113,6 @@ export type GovernorsQueryVariables = Exact<{
 
 export type GovernorsQuery = { governors: Array<{ id: string, name: string, delegates: Array<{ account: { id: string } }>, proposalStats: { total: number, active: number } }> };
 
-export type ProposalsQueryVariables = Exact<{
-  chainId: Scalars['ChainID'];
-  pagination?: InputMaybe<Pagination>;
-  sort?: InputMaybe<ProposalSort>;
-}>;
-
-
-export type ProposalsQuery = { proposals: Array<{ id: string, title: string, eta?: string | null, governor: { name: string }, voteStats?: Array<{ support: SupportType, weight: string, votes: string, percent: number }> | null }> };
-
 
 export const GovernorsDocument = `
     query Governors($chainIds: [ChainID!], $pagination: Pagination, $sort: GovernorSort) {
@@ -2130,36 +2140,6 @@ export const useGovernorsQuery = <
     ) =>
     useQuery<GovernorsQuery, TError, TData>(
       variables === undefined ? ['Governors'] : ['Governors', variables],
-      useGraphQL<GovernorsQuery, GovernorsQueryVariables>(GovernorsDocument).bind(null, variables),
-      options
-    );
-export const ProposalsDocument = `
-    query Proposals($chainId: ChainID!, $pagination: Pagination, $sort: ProposalSort) {
-  proposals(chainId: $chainId, pagination: $pagination, sort: $sort) {
-    id
-    title
-    eta
-    governor {
-      name
-    }
-    voteStats {
-      support
-      weight
-      votes
-      percent
-    }
-  }
-}
-    `;
-export const useProposalsQuery = <
-      TData = ProposalsQuery,
-      TError = Error
-    >(
-      variables: ProposalsQueryVariables,
-      options?: UseQueryOptions<ProposalsQuery, TError, TData>
-    ) =>
-    useQuery<ProposalsQuery, TError, TData>(
-      ['Proposals', variables],
-      useGraphQL<ProposalsQuery, ProposalsQueryVariables>(ProposalsDocument).bind(null, variables),
+      useGraphQLCodegen<GovernorsQuery, GovernorsQueryVariables>(GovernorsDocument).bind(null, variables),
       options
     );

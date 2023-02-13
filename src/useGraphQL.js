@@ -1,13 +1,13 @@
-export const useGraphQL = <Data, Variables extends Record<string, unknown>>(
-  query: string
-): ((variables?: Variables) => Promise<Data>) => {
-  return (variables?: Variables) =>
-    // @ts-expect-error
+import { useState, useEffect } from "react";
+
+export const useGraphQL = ({ query, variables }) => {
+  const [data, setData] = useState();
+
+  useEffect(() => {
     fetch(import.meta.env.VITE_TALLY_API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        // @ts-expect-error
         "Api-Key": import.meta.env.VITE_TALLY_API_KEY,
       },
       body: JSON.stringify({
@@ -23,11 +23,14 @@ export const useGraphQL = <Data, Variables extends Record<string, unknown>>(
           return null;
         }
 
-        return json.data;
+        setData(json.data);
       })
       .catch((error) => {
         console.log("Error when fetching =>", error);
 
         return null;
       });
+  }, []);
+
+  return data;
 };

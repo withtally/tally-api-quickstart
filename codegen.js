@@ -28,7 +28,7 @@ const config = {
             AccountID: "string",
           },
           fetcher: {
-            func: "../autogen/useGraphQL#useGraphQL",
+            func: "../autogen/useGraphQLCodegen#useGraphQLCodegen",
             isReactHook: true,
           },
         },
