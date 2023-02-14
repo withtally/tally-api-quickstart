@@ -1,5 +1,5 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
-import { useGraphQLCodegen } from '../autogen/useGraphQLCodegen';
+import { useGraphQLCodegen } from '../../autogen/useGraphQLCodegen';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -2111,7 +2111,7 @@ export type GovernorsQueryVariables = Exact<{
 }>;
 
 
-export type GovernorsQuery = { governors: Array<{ id: string, name: string, delegates: Array<{ account: { id: string } }>, proposalStats: { total: number, active: number } }> };
+export type GovernorsQuery = { governors: Array<{ id: string, name: string, tokens: Array<{ stats: { voters: number } }>, proposalStats: { total: number, active: number } }> };
 
 
 export const GovernorsDocument = `
@@ -2119,9 +2119,9 @@ export const GovernorsDocument = `
   governors(chainIds: $chainIds, pagination: $pagination, sort: $sort) {
     id
     name
-    delegates {
-      account {
-        id
+    tokens {
+      stats {
+        voters
       }
     }
     proposalStats {

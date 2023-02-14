@@ -2,9 +2,9 @@ query Governors($chainIds: [ChainID!], $pagination: Pagination, $sort: GovernorS
   governors(chainIds: $chainIds, pagination: $pagination, sort: $sort) {
     id
     name
-    delegates {
-      account {
-        id
+    tokens {
+      stats {
+        voters
       }
     }
     proposalStats {

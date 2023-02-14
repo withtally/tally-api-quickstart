@@ -3,18 +3,21 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "gen:types": "npx graphql-codegen --config codegen.js && esbuild autogen/schema.ts --format=esm --outfile=src/hooks.js",
-    "watch": "npm run config --watch"
+    "gen": "run-p gen:*",
+    "gen:types": "npx graphql-codegen --config codegen.js",
+    "gen:hooks": "esbuild autogen/schema.ts --format=esm --outfile=src/CodegenQuery/hooks.js",
+    "dev": "run-p dev:*",
+    "dev:types": "npm run gen:types -- --watch",
+    "dev:hooks": "npm run gen:hooks -- --watch",
+    "dev:vite": "vite"
   },
   "dependencies": {
-    "@tanstack/react-query": "^4.24.4", 
+    "@tanstack/react-query": "^4.24.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "npm-run-all": "^4.1.5",
     "@graphql-codegen/cli": "^2.16.5",
     "@graphql-codegen/typescript-operations": "^2.5.13",
     "@graphql-codegen/typescript-react-query": "^4.1.0",

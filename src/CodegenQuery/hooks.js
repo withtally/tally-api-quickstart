@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useGraphQLCodegen } from "../autogen/useGraphQLCodegen";
+import { useGraphQLCodegen } from "../../autogen/useGraphQLCodegen";
 var AccountActivitySortField = /* @__PURE__ */ ((AccountActivitySortField2) => {
   AccountActivitySortField2["BlockTimestamp"] = "BLOCK_TIMESTAMP";
   return AccountActivitySortField2;
@@ -195,9 +195,9 @@ const GovernorsDocument = `
   governors(chainIds: $chainIds, pagination: $pagination, sort: $sort) {
     id
     name
-    delegates {
-      account {
-        id
+    tokens {
+      stats {
+        voters
       }
     }
     proposalStats {

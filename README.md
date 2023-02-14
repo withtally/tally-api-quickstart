@@ -33,7 +33,9 @@ this will result in a new hook in the hook.js file, which you can import and use
 
 if you would prefer to make raw graphql queries without the use of codegen tooling, take a look at the second query in the Proposals component
 
-simply pass your graphql document string and variable argument to the useGraphQL helper function to query the API
+simply pass your graphql document string and variable arguments to the fetcher helper function to query the API
+
+(explain fetcher)
 
 ##### API reference:
 
