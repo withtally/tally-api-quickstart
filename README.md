@@ -39,7 +39,9 @@ finally, the third table uses a helpful hook that we've created for you: useQuer
 
 ##### Making your first GraphQL query
 
-for those of you who aren't familiar with using GraphQL, have no fear! Making a GraphQL query with our fetcher method is as simple as defining your GraphQL query "document", and passing arguments. 
+for those of you who aren't familiar with using GraphQL, have no fear! 
+
+making a GraphQL query with our fetcher method is as simple as defining your GraphQL query "document", and passing arguments. 
 
 as you can see in src/Proposals.jsx, the GraphQL document is simply a string that defines which API query you are calling and which fields you'd like to fetch 
 
@@ -49,7 +51,7 @@ when you've defined your document string pass it to the fetcher like so:
 
 ```fetcher({ query: queryDocument })```
 
-when passing arguments, reference the Tally API plaground or docs see which arguments are required for your query
+when passing arguments, reference the Tally API playground or docs see which arguments are required for your query
 
 you can then pass them to the fetcher as variables: 
 
@@ -61,9 +63,9 @@ fetcher({
        })
 ```
 
-once you've passed your query and variables, fetcher will return your data. you can capture your response as a promise 
+once you've passed your query and variables, fetcher will return your data as a promise
 
-here's an example of handling the response in a ```.then()``` and setting the response to some local state
+here's an example of handling the response in a ```.then()``` and setting it to some local state
 
 ```
 fetcher({ ... }).then((data) => {
