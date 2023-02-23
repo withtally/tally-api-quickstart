@@ -21,13 +21,13 @@ add your API KEY as VITE_TALLY_API_KEY={ your_tally_api_key }
 
 ##### Querying the Tally API:
 
-the quickstart application renders two example tables: governors and proposals
+the quickstart application renders three example tables: governors, proposals and polygon proposals
 
 the first table queries the API using auto-generated hooks that you will find in src/hooks.js
 
 to edit or add new queries, edit or add your .graphql files in the src directory and run:
 
-```npm run gen:types```
+```npm run gen```
 
 this will result in a new hook in the hook.js file, which you can import and use in your application
 
@@ -35,7 +35,30 @@ if you would prefer to make raw graphql queries without the use of codegen tooli
 
 simply pass your graphql document string and variable arguments to the fetcher helper function to query the API
 
-(explain fetcher)
+finally, the third table uses a helpful hook that we've created for you: useQuery. This hook uses React Query to supply states like isLoading, error, etc 
+
+##### Making your first GraphQL query
+
+for those of you who aren't familiar with using GraphQL, have no fear! Making a GraphQL query with our useQuery hook is as simple as defining your GraphQL query "document", and passing arguments to the hook. 
+
+as you can see in src/Proposals.jsx, the GraphQL document is simply a string that defines which API query you are calling and which fields you'd like to fetch 
+
+for more information on GraphQL querying checkout https://graphql.org/learn/queries/
+
+when you've defined your docuemnt string pass it to the fetcher like so: ```fetcher({ query: queryDocument })```
+
+when passing arguments, reference the Tally API plaground or docs see which arguments are required for your query
+
+you can then pass them to the fetcher as variables: 
+
+```
+fetcher({
+      query: proposalQueryDocument,
+      variables: {
+        id: proposalId,
+       })
+```
+
 
 ##### API reference:
 
